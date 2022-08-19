@@ -66,7 +66,7 @@ Fit the model with the selected bandwidth
 source('code/pseudo_fit.R')
 ```
 
-This will generate the intermediate result `pseudo_result.RData` under `code` folder. Run
+This will generate the intermediate result `pseudo_fit.RData` under `code` folder. Run
 
 ```r
 source('code/figure3.R')
@@ -94,7 +94,7 @@ Run
 source('code/pseudo_full_fit.R')
 ```
 
-to generate intermediate result `pseudo_full_result.RData` under `code` folder. Run
+to generate intermediate result `pseudo_full_fit.RData` under `code` folder. Run
 
 ```r
 source('code/figureS1.R')
