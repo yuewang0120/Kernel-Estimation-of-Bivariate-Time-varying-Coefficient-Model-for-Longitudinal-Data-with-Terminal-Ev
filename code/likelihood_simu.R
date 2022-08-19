@@ -1,7 +1,7 @@
-library(parallel)
-library(kereg)
-source("reproducibility/functions.R")
-cl <- makeCluster(rep_circinus(c(31, 33, 35, 37:39, 41, 46), length = 124))
+## Although the paper used maxiter=1000, in practice maxiter=20 is enough for the Robbins Monro algorithm to converge quite well
+## For faster replication, readers could set maxiter = 20 at the end of this code
+source("code/functions.R")
+cl <- makeCluster(20)
 sim_one_person <- function(m) {
     tau <- runif(1)
     tau <- c(tau, rbeta(m - 1, tau / 4 / 0.01^2, (1 - tau) / 4 / 0.01^2) + 1:(m - 1))
@@ -95,5 +95,5 @@ for (i in 1:1000) {
     clusterExport(cl, c("sigma_cca", "data"))
     system.time(fca[[i]] <- parApply(cl, cbind(teval, cca[[i]]$coef), 1, function(x) robbins_monro(x[3:5], function(y) -fca_log_likelihood(y, sigma_cca[1, ], x[1], x[2], 1, data)[-1], initstep = 0.01, maxiter = 1000)))
 }
-save(cca, fca, file = "reproducibility/likelihood_simu_result.RData")
+save(cca, fca, file = "code/likelihood_simu_result.RData")
 stopCluster(cl)

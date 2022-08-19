@@ -1,0 +1,4 @@
+         estimate_diff1 lower_ci1 upper_ci1 pvalue1 estimate_diff2 lower_ci2 upper_ci2 pvalue2
+T = 360           0.083     0.070     0.097       0          0.068     0.055     0.081       0
+T = 900           0.094     0.077     0.112       0          0.066     0.049     0.083       0
+T = 1440          0.089     0.070     0.107       0          0.100     0.080     0.120       0

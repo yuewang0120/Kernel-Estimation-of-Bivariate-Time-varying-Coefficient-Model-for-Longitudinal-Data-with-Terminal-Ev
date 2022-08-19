@@ -1,9 +1,5 @@
 load("code/simu_result.RData")
 source("code/functions.R")
-library(dplyr)
-library(abind)
-library(ggplot2)
-library(gridExtra)
 grid <- expand.grid(seq(0, 18, 0.1), seq(0, 18, 0.1)) %>% filter(Var1 + Var2 >= 5, Var1 + Var2 <= 18)
 truebeta <- cbind(mapply(beta1, grid[, 1], grid[, 2]), mapply(beta2, grid[, 1], grid[, 2]), mapply(beta3, grid[, 1], grid[, 2]))
 
@@ -69,8 +65,7 @@ p6 <- foo(2, 16, 6)
 p7 <- foo(3, 8, 7)
 p8 <- foo(3, 12, 8)
 p9 <- foo(3, 16, 9)
-library(gridExtra)
-png("figure1.png", width = 1200, height = 900)
+png("code/figure1.png", width = 1200, height = 900)
 grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, nrow = 3, ncol = 3, heights = c(1.1, 1, 1.1))
 dev.off()
 
@@ -116,6 +111,6 @@ p3 <- ggplot(df, aes(x = Var1, y = Var2, fill = coverage)) +
     xlab("t") +
     ggtitle(expression(beta[3])) +
     theme(text = element_text(size = 15))
-png("figure2.png", width = 860, height = 442)
+png("code/figure2.png", width = 860, height = 442)
 grid.arrange(p1, p2, p3, nrow = 1, ncol = 3, widths = c(1, 1, 1.33))
 dev.off()

@@ -1,0 +1,13 @@
+This file contains the description of the pseudo data set stored in usrds.RData.
+
+There are 2131035 rows and 9 columns in the dataset. Each row corresponds to one record of a specific individual and each individual consists of one or more than one records. The size of this pseudo dataset is the same as the original dataset used in Section 5 of the paper.
+
+Columns:
+pseudo_id       - created to replace the patient identifier in the original dataset.
+died_day        - indicate on which day the patient dies. Day 0 is the day they had their first ESRD service.
+day_since_entry - indicate on which day this record happened. It is an integer between 0 and died_day.
+race            - indicate race of the patient. 1 = white, 2 = black.
+heart_disease   - indicate whether the patient had heart disease. 0 = no, 1 = yes.
+diabetes        - indicate whether the patient had diabetes. 0 = no, 1 = yes.
+primary         - indicate whether Medicare is the primary payer for the patient on a specific day. 0 = no, 1 = yes.
+daily_claim     - The amount of claims on this day.

@@ -1,3 +1,10 @@
+library(matrixStats)
+library(ggplot2)
+library(dplyr)
+library(parallel)
+library(survival)
+library(gridExtra)
+library(abind)
 rep_circinus <- function(...) {
     paste0("circinus-", rep(...), ".ics.uci.edu")
 }
@@ -180,3 +187,31 @@ kereg_fitci <- function(x, y, t, h, id, res, teval, adaptive = F) {
         return(list(coef = result[, 1:p], sandwich_var = result[, (p + 1):(p * (p + 3) / 2)], dpi_var = result[, (p * (p + 3) / 2 + 1):(p * (p + 2))], h = result[, (p + 1)^2]))
     }
 }
+kereg_cv <-
+  function(x, y, t, h, fold, id, nfold = 5, adaptive = F, seed = NULL) {
+    uniq_id <- unique(id)
+    if (is.numeric(seed)) set.seed(seed)
+    folds <- split(sample(uniq_id), rep(1:nfold, length.out = length(uniq_id)))
+    if (adaptive) {
+      job <- function(code) {
+        test <- id %in% folds[[code[2]]]
+        fit <- kereg_fit(x[!test, , drop = F], y[!test], t[!test, ], code[1], t[test, ], adaptive = adaptive)
+        resid <- y[test] - rowSums(x[test, , drop = F] * fit$coef)
+        c(mean(resid^2), length(resid))
+      }
+    } else {
+      job <- function(code) {
+        p <- ncol(x)
+        test <- id %in% folds[[code[2]]]
+        fit <- kereg_fit(x[!test, , drop = F], y[!test], t[!test, ], code[1], t[test, ], adaptive = adaptive)
+        id <- fit$rank == p
+        resid <- y[test][id] - rowSums(x[test, , drop = F][id, , drop = F] * fit$coef[id, , drop = F])
+        c(mean(resid^2), length(resid))
+      }
+    }
+    temp <- expand.grid(h, fold)
+    names(temp) <- c("h", "fold")
+    result <- t(apply(temp, 1, job))
+    colnames(result) <- c("mse", "n")
+    cbind(temp, result)
+  }

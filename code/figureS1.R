@@ -1,4 +1,4 @@
-load("code/pseudo_full_result.RData")
+load("code/pseudo_full_fit.RData")
 ci1 <- function(xeval, x, est, var, c1) {
     id <- as.numeric(cut(xeval, x, include.lowest = T))
     q <- qnorm(0.025 / length(x), lower.tail = F)
@@ -42,7 +42,7 @@ df <- data.frame(
     death = rep(c(rep(359 + 1, 359), rep(899 + 1, 899), rep(1439 + 1, 1439)), 5)
 )
 library(ggplot2)
-png("figureS1.png", width = 860, height = 1105)
+png("code/figureS1.png", width = 860, height = 1105)
 p <- ggplot(df, aes(x = x)) +
     geom_line(aes(y = est)) +
     geom_line(aes(y = 0), linetype = "dotted") +

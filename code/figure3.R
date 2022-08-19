@@ -1,4 +1,4 @@
-load("code/pseudo_result.RData")
+load("code/pseudo_fit.RData")
 df <- data.frame(
     x = rep(c(1:359, 1:899, 1:1439), 2),
     est = c(fit$coef[, 1], fit$coef[, 1] + fit$coef[, 2]),
@@ -6,7 +6,7 @@ df <- data.frame(
     death = factor(rep(c(rep(360, 359), rep(900, 899), rep(1440, 1439)), 2)),
     beta = rep(c("primary", "secondary"), each = nrow(fit$coef))
 )
-png("figure3.png", height = 442, width = 860)
+png("code/figure3.png", height = 442, width = 860)
 library(ggplot2)
 p <- ggplot(df, aes(x = x)) +
     geom_line(aes(y = est)) +

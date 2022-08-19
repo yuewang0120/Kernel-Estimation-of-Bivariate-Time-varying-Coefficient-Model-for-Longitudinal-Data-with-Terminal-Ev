@@ -22,21 +22,20 @@ sim_one_person <- function(m) {
     y <- beta1(tau, death - tau) + beta2(tau, death - tau) * x2 + beta3(tau, death - tau) * x3 + u + rnorm(m)
     data.frame(tau = tau[tau <= end], x2 = x2, x3 = x3[tau <= end], y = y[tau <= end], end = end, died = death < censor)
 }
-grid <- expand.grid(seq(0, 18, 0.1), seq(0, 18, 0.1)) %>% filter(Var1 + Var2 >= 5, Var1 + Var2 <= 18)
-result <- vector("list", 1000)
-for (i in 1:1000) {
+## We only do cross-validation on 10 simulated datasets and use their mean as the CV selected bandwidth
+## We divided the CV selected bandwidth by 1000^0.05 to be the final bandwidth
+result <- vector("list", 10)
+for (i in 1:10) {
     cat(i)
     set.seed(i)
     data <- sim_n_persons(4000, 20)
-    fit <- data %>%
-        filter(died) %>%
-        with(kereg_fit(cbind(1, x2, x3), y, cbind(tau, end - tau), 0.66, adaptive = T))
-    res <- data %>%
-        filter(died) %>%
-        with(y - rowSums(cbind(1, x2, x3) * fit$coef))
     result[[i]] <- data %>%
         filter(died) %>%
-        with(kereg_fitci(cbind(1, x2, x3), y, cbind(tau, end - tau), 0.66, id, res, grid))
+        with(kereg_cv(cbind(1, x2, x3), y, cbind(tau, end - tau), 1.2^(-10:10), 1:5, id, adaptive = T, seed = 123))
 }
-save(result, file = "code/simu_result.RData")
+rec <- c()
+for (i in 1:10) {
+  rec[i] <- result[[i]] %>% group_by(h) %>% summarize(sse = sum(mse*n)) %>% with(h[which.min(sse)])
+}
+print(mean(rec)/4000^0.05)
 stopCluster(cl)
