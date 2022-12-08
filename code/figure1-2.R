@@ -65,52 +65,23 @@ p6 <- foo(2, 16, 6)
 p7 <- foo(3, 8, 7)
 p8 <- foo(3, 12, 8)
 p9 <- foo(3, 16, 9)
-png("code/figure1.png", width = 1200, height = 900)
+png("code/figure1.png", width = 1200, height = 900, type = 'cairo')
 grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, nrow = 3, ncol = 3, heights = c(1.1, 1, 1.1))
 dev.off()
-
+ 
 # figure 2
-cover <- function(x) {
-    cbind(
-        x$coef[, 1] - 1.96 * sqrt(x$sandwich_var[, 1]),
-        x$coef[, 2] - 1.96 * sqrt(x$sandwich_var[, 4]),
-        x$coef[, 3] - 1.96 * sqrt(x$sandwich_var[, 6])
-    ) < truebeta &
-        cbind(
-            x$coef[, 1] + 1.96 * sqrt(x$sandwich_var[, 1]),
-            x$coef[, 2] + 1.96 * sqrt(x$sandwich_var[, 4]),
-            x$coef[, 3] + 1.96 * sqrt(x$sandwich_var[, 6])
-        ) > truebeta
-}
-temp <- do.call(function(...) abind(..., along = 3), lapply(result, cover))
-coverp <- apply(temp, 1:2, function(x) mean(x, na.rm = T))
-df <- data.frame(Var1 = grid[, 1], Var2 = grid[, 2], cover1 = coverp[, 1], cover2 = coverp[, 2], coverage = coverp[, 3])
-p1 <- ggplot(df, aes(x = Var1, y = Var2, fill = cover1)) +
-    geom_raster() +
-    scale_fill_distiller(palette = "Spectral", limits = c(0.8, 1)) +
-    theme(legend.position = "none") +
-    coord_fixed() +
-    ylab("s") +
-    xlab("t") +
-    ggtitle(expression(beta[1])) +
-    theme(text = element_text(size = 15))
-p2 <- ggplot(df, aes(x = Var1, y = Var2, fill = cover2)) +
-    geom_raster() +
-    scale_fill_distiller(palette = "Spectral", limits = c(0.8, 1)) +
-    theme(legend.position = "none") +
-    coord_fixed() +
-    ylab("s") +
-    xlab("t") +
-    ggtitle(expression(beta[2])) +
-    theme(text = element_text(size = 15))
-p3 <- ggplot(df, aes(x = Var1, y = Var2, fill = coverage)) +
-    geom_raster() +
-    scale_fill_distiller(palette = "Spectral", limits = c(0.8, 1)) +
-    coord_fixed() +
-    ylab("s") +
-    xlab("t") +
-    ggtitle(expression(beta[3])) +
-    theme(text = element_text(size = 15))
-png("code/figure2.png", width = 860, height = 442)
-grid.arrange(p1, p2, p3, nrow = 1, ncol = 3, widths = c(1, 1, 1.33))
+est <- sapply(result, function(x)x$coef)
+upper <- est + sapply(result, function(x)sqrt(x$sandwich_var[,c(1,4,6)])) * 1.96
+lower <- est * 2 - upper
+png("code/figure2.png", width = 900, height = 900, type = 'cairo')
+data.frame(t = rep(grid$Var1,3), s = rep(grid$Var2, 3), 
+           coverage = (upper > c(truebeta) & lower < c(truebeta)) %>% rowMeans(), 
+           beta = rep(paste0('beta[', 1:3, ']'), each = nrow(grid))) %>%
+    mutate(period = t+s) %>% 
+    filter(period %in% c(8, 12, 16)) %>%
+    ggplot(aes(x = t)) + 
+    geom_line(aes(y = coverage)) + 
+    geom_line(aes(y = 0.95), linetype = 'dotted') + 
+    facet_grid(beta ~ factor(paste0("'t+s=", period, "'"), levels=paste0("'t+s=", c(8, 12, 16), "'")), scale = 'free_x', labeller = label_parsed) +
+    theme(text = element_text(size = 30), aspect.ratio = 1) + ylab('') + ylim(c(0, 1))
 dev.off()
