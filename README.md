@@ -24,7 +24,7 @@ Researchers could use the R scripts to reproduce the results in the paper (inclu
 
 ## Instructions for Use
 
-### 1. Simulation (Section 4)
+### 1. The Main Simulation with All Time-varying coefficients (Section 4)
 
 A bandwidth of 0.66 is used for simulation, this can be validated by replicating the cross-validation procedure
 
@@ -44,7 +44,23 @@ This will generate intermediate results, stored in `simu_result.RData` under `co
 source('code/figure1-2.R')
 ```
 
-to generate Figure 1 and 2 under the same folder. Run
+to generate Figure 1 and 2 under the same folder.
+
+### 2. A Separate Simulation with $\beta_3=0.5$ (Section 4)
+
+A bandwidth of 0.68 is used for simulation, this can be validated by replicating the cross-validation procedure
+
+```r
+source('code/simu_cv_beta3=0.5.R')
+```
+
+Run simulation with 1000 replications with the selected bandwidth $h=0.68$
+
+```r
+source('code/simu_beta3=0.5.R')
+```
+
+This will generate intermediate results, stored in `simu_result_beta3=0.5.RData` under `code` folder. Once this is done, run
 
 ```r
 source('code/table1-2.R')
@@ -52,7 +68,7 @@ source('code/table1-2.R')
 
 to generate Table 1 and 2 under the same folder.
 
-### 2. ESRD Application with A Reduced Model (Section 5, with Pseudo Dataset)
+### 3. ESRD Application with A Reduced Model (Section 5, with Pseudo Dataset)
 
 Replicate cross-validation
 
@@ -80,7 +96,7 @@ source('code/table3-4.R')
 
 to generate Table 1 and 2.
 
-### 3. ESRD Application with A Full Model (Section C in the Online Supplementary Material, with Pseudo Dataset)
+### 4. ESRD Application with A Full Model (Section C in the Online Supplementary Material, with Pseudo Dataset)
 
 Replicate cross-validation
 
@@ -102,7 +118,7 @@ source('code/figureS1.R')
 
 to generate Figure S1. 
 
-### 4. Simulation for the Locally Weighted Pseudo Likelihood Approach (Section D in the Online Supplementary Material)
+### 5. Simulation for the Locally Weighted Pseudo Likelihood Approach (Section D in the Online Supplementary Material)
 
 Run
 
