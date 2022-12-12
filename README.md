@@ -94,7 +94,7 @@ to generate Figure 3. Run
 source('code/table3-4.R')
 ```
 
-to generate Table 1 and 2.
+to generate Table 3 and 4.
 
 ### 4. ESRD Application with A Full Model (Section C in the Online Supplementary Material, with Pseudo Dataset)
 
