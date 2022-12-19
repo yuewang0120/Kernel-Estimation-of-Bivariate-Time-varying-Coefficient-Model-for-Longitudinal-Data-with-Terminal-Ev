@@ -6,7 +6,7 @@ df <- data.frame(
     death = factor(rep(c(rep(360, 359), rep(900, 899), rep(1440, 1439)), 2)),
     beta = rep(c("primary", "secondary"), each = nrow(fit$coef))
 )
-png("code/figure3.png", height = 442, width = 860)
+png("code/figure3.png", height = 442, width = 860, type = 'cairo')
 library(ggplot2)
 p <- ggplot(df, aes(x = x)) +
     geom_line(aes(y = est)) +
