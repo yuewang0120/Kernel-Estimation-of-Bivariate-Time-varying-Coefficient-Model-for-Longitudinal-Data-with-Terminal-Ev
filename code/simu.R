@@ -22,7 +22,7 @@ sim_one_person <- function(m) {
     y <- beta1(tau, death - tau) + beta2(tau, death - tau) * x2 + beta3(tau, death - tau) * x3 + u + rnorm(m)
     data.frame(tau = tau[tau <= end], x2 = x2, x3 = x3[tau <= end], y = y[tau <= end], end = end, died = death < censor)
 }
-grid <- expand.grid(seq(0, 18, 0.1), seq(0, 18, 0.1)) %>% filter(Var1 + Var2 >= 5, Var1 + Var2 <= 18)
+grid <- expand.grid(seq(0, 18, 0.1), seq(0, 18, 0.1)) %>% filter(Var1 + Var2 == 8 | Var1 + Var2 == 12 | Var1 + Var2 == 16)
 result <- vector("list", 1000)
 for (i in 1:1000) {
     cat(i)
