@@ -30,13 +30,13 @@ for (i in 1:1000) {
   data <- sim_n_persons(4000, 20)
   fit <- data %>%
     filter(died) %>%
-    with(kereg_fit(cbind(1, x2, x3), y, cbind(tau, end - tau), 0.68, adaptive = T))
+    with(kereg_fit(cbind(1, x2, x3), y, cbind(tau, end - tau), 0.67, adaptive = T))
   res <- data %>%
     filter(died) %>%
     with(y - rowSums(cbind(1, x2, x3) * fit$coef))
   result[[i]] <- data %>%
     filter(died) %>%
-    with(kereg_fitci(cbind(1, x2, x3), y, cbind(tau, end - tau), 0.68, id, res, grid))
+    with(kereg_fitci(cbind(1, x2, x3), y, cbind(tau, end - tau), 0.67, id, res, grid))
 }
 save(result, file = "code/simu_result_beta3=0.5.RData")
 stopCluster(cl)
