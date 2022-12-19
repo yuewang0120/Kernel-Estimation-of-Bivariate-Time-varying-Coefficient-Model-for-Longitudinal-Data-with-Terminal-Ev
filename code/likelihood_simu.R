@@ -32,7 +32,7 @@ fca_log_likelihood <- function(beta, sigma, t, s, h, data) {
     set.seed(123)
     cluster <- kmeans(cbind(x2, x30), 10)$cluster
     library(survival)
-    km <- survfit(Surv(temp, temp2)~cluster)
+    km <- survfit(Surv(temp, temp2)~cluster, se.fit = F)
     for (i in unique(data$id)) {
         id <- data$id == i & sigma > 0 # at sparse area residual could be zero, so does sigma
         if (data$died[id][1] == 1) {
@@ -42,10 +42,11 @@ fca_log_likelihood <- function(beta, sigma, t, s, h, data) {
             loglik <- loglik + phi
             dloglik <- dloglik + dphi
         } else {
-            temp <- sort(cluster)==cluster[i]
-            time <- km$time[temp]
-            prob <- -diff(c(1, km$surv[temp]))
-            id2 <- time > data$end[id][1] & km$n.event[temp] > 0
+            skm <- summary(km)
+            temp <- skm$strata==paste0('cluster=', cluster[i])
+            time <- skm$time[temp]
+            prob <- -diff(c(1, skm$surv[temp]))
+            id2 <- time > data$end[id][1]
             if (sum(id2) == 0) next
             k <- outer(time[id2], data$t[id], function(x, y) kernel2d((y - t) / h, (x - y - s) / h))
             phi <- k %*% dnorm(data$y[id], beta[1] + data$x2[id] * beta[2] + data$x3[id] * beta[3], sd = sqrt(sigma[id]), log = T)
@@ -93,7 +94,7 @@ for (i in 1:1000) {
     }
     sigma_cca <- sapply(data$t, estimate_sigma, h = 1)
     clusterExport(cl, c("sigma_cca", "data"))
-    system.time(fca[[i]] <- parApply(cl, cbind(teval, cca[[i]]$coef), 1, function(x) robbins_monro(x[3:5], function(y) -fca_log_likelihood(y, sigma_cca[1, ], x[1], x[2], 1, data)[-1], initstep = 0.01, maxiter = 1000)))
+    fca[[i]] <- parApply(cl, cbind(teval, cca[[i]]$coef), 1, function(x) robbins_monro(x[3:5], function(y) -fca_log_likelihood(y, sigma_cca[1, ], x[1], x[2], 1, data)[-1], initstep = 0.01, maxiter = 20))
 }
 save(cca, fca, file = "code/likelihood_simu_result.RData")
 stopCluster(cl)
