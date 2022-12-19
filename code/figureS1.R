@@ -42,7 +42,7 @@ df <- data.frame(
     death = rep(c(rep(359 + 1, 359), rep(899 + 1, 899), rep(1439 + 1, 1439)), 5)
 )
 library(ggplot2)
-png("code/figureS1.png", width = 860, height = 1105)
+png("code/figureS1.png", width = 860, height = 1105, type = 'cairo')
 p <- ggplot(df, aes(x = x)) +
     geom_line(aes(y = est)) +
     geom_line(aes(y = 0), linetype = "dotted") +
